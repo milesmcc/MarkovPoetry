@@ -9,33 +9,37 @@ public class Main {
 
     public static void main(String[] args) {
 
-        if(args.length != 2){
-            p("Usage: ... /full/path/to/trump.txt");
+        /*
+        Make sure they are using this correctly.
+         */
+        if(args.length != 1){
+            p("Usage: ... /full/path/to/data.txt");
+            return;
         }
 
-        //File file = new File(args[0]);
-        //boolean probabilityMode = Boolean.valueOf(args[1]);
-        File file = new File("/Users/Main/Documents/spratt_data.txt");
+        File file = new File(args[0]);
+        //File file = new File("/Users/Main/Documents/spratt_data.txt");
 
         p("Source: " + file.getAbsolutePath());
         p("Creating database...");
-        Database database = new DatabaseBuilder(file).buildDatabase();
+        Database database = new DatabaseBuilder(file).buildDatabase(); // build the database... this may take awhile.
         p("Database created.");
-        //database.printDatabase();
-        database.printDatabaseInfo();
+        //database.printDatabase(); // this pushes out a lot of data...
+        database.printDatabaseInfo(); // this just pushes out metadata
         p("Generating markov chains to PERIOD from each stem...");
+        p("----------------------------------------------------");
         Random random = new Random();
-        for(Bigram stem : database.getStems()){
+        for(Bigram stem : database.getStems()){ // for every stem in the database we create a sentence
             ArrayList<String> chain = new ArrayList<>();
-            chain.add(stem.getW1());
-            chain.add(stem.getW2());
-            boolean print = true;
-            while(chain.get(chain.size() - 1).equals("PERIOD") != true) {
-                Bigram state = new Bigram(chain.get(chain.size() - 2), chain.get(chain.size() - 1));
-                List<String> possibilities = database.getPossibleWords(state);
-                if (possibilities.size() > 0) {
+            chain.add(stem.getW1()); // we add the first word of the stem to the chain
+            chain.add(stem.getW2()); // and the second word
+            boolean print = true; // this comes in handy later when we want to know whether or not the sentence is complete with a PERIOD at the end.
+            while(chain.get(chain.size() - 1).equals("PERIOD") != true) { // keep on adding new words to the chain until the last word in the chain is PERIOD
+                Bigram state = new Bigram(chain.get(chain.size() - 2), chain.get(chain.size() - 1)); // create a bigram of the current state, words 1 and 2 indexes behind the i
+                List<String> possibilities = database.getPossibleWords(state); // get the possibilities out of the database
+                if (possibilities.size() > 0) { // if there are possibilities
                     chain.add(possibilities.get(random.nextInt(possibilities.size()))); // random markov, but still follows adheres to probability because higher frequency state-result pairs will have higher quantity within the possibilities pool.
-                }else{
+                }else{ // and if there aren't...
                     String chain_string = "";
                     for(String s : chain){
                         chain_string += s + " ";
@@ -50,17 +54,21 @@ public class Main {
                 for (String s : chain) {
                     chain_string += s + " ";
                 }
-                p(chain_string);
+                m(chain_string);
             }
         }
-        database.printDatabaseInfo();
+        p("----------------------------------------------------");
+        database.printDatabaseInfo(); // just so we know
     }
 
     public static void p(String s){
         System.out.println(ANSI_GREEN + "main: " + s + ANSI_RESET); // because i'm lazy
     }
+    public static void m(String s){
+        System.out.println(ANSI_PURPLE + "" + s + ANSI_RESET); // because i'm lazy
+    }
 
-    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_RESET = "\u001B[0m"; //colors!
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_GREEN = "\u001B[32m";

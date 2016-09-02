@@ -9,11 +9,17 @@ import java.util.Random;
  * Created by Main on 9/1/16.
  */
 public class Database {
-    HashMap<String, HashMap<String, List<String>>> database = new HashMap<>();
-    ArrayList<Bigram> stems = new ArrayList<>();
+    HashMap<String, HashMap<String, List<String>>> database = new HashMap<>(); // our database tree-ish system. I know there are better ways to implement this, but this one is so fast. If you've got a better way, PR or tell me.
     // shady binary search tree implementation
 
-    public void insert(Bigram bigram, String word){
+    ArrayList<Bigram> stems = new ArrayList<>(); // our lovely stems
+
+    /**
+     * Insert word into the database as the result of bigram.
+     * @param bigram the bigram stem
+     * @param word the word to insert
+     */
+    public void insert(Bigram bigram, String word){ // i'm not going to comment the below because it's pretty self explanitory.
         if(database.containsKey(bigram.getW1())){
             if(database.get(bigram.getW1()).containsKey(bigram.getW2())){
                 database.get(bigram.getW1()).get(bigram.getW2()).add(word);
@@ -30,12 +36,15 @@ public class Database {
             database.put(bigram.getW1(), secondDimensionalMap);
         }
 
-        if(bigram.getW1().equals("PERIOD")){
+        if(bigram.getW1().equals("PERIOD")){ //okay, I'll comment this. If the bigram w2 is PERIOD, the next words are likely the beginning of a new sentence, and therefore would make good stems.
             stems.add(new Bigram(bigram.getW2(), word));
         }
         // gotta love Java
     }
 
+    /**
+     * Print the database info.
+     */
     public void printDatabaseInfo(){
         p("Number of level 1 keys: " + database.size());
         int level2 = 0;
@@ -53,6 +62,7 @@ public class Database {
 
     Bigram mostCommonStem = null;
 
+    // yeah. Load most common stem.
     public void loadMostCommonStem(){
         HashMap<Long, Integer> stemsLoaded = new HashMap<>();
         HashMap<Long, Bigram> refindIndex = new HashMap<>(); // so that it's easy to get the correct Bigram back at the end
