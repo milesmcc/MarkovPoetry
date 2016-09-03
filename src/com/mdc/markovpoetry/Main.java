@@ -12,13 +12,13 @@ public class Main {
         /*
         Make sure they are using this correctly.
          */
-        if(args.length != 1){
-            p("Usage: ... /full/path/to/data.txt");
-            return;
-        }
+        //if(args.length != 1){
+         //   p("Usage: ... /full/path/to/data.txt");
+         //   return;
+        //}
 
-        File file = new File(args[0]);
-        //File file = new File("/Users/Main/Documents/spratt_data.txt");
+        //File file = new File(args[0]);
+        File file = new File("/Users/Main/Desktop/datasets3/big.txt");
 
         p("Source: " + file.getAbsolutePath());
         p("Creating database...");
@@ -57,6 +57,23 @@ public class Main {
                 m(chain_string);
             }
         }
+        p("----------------------------------------------------");
+        Bigram stem = database.getMostCommonStem();
+        String mostCommon = stem.getW1() + " " + stem.getW2() + " ";
+        int words =0;
+        try {
+            while (!mostCommon.trim().endsWith("PERIOD") && words < 15) {
+                String[] split = mostCommon.split(" ");
+                String w1 = split[split.length - 2];
+                String w2 = split[split.length - 1];
+                Bigram state = new Bigram(w1, w2);
+                mostCommon += database.getMostLikelyFollower(state) + " ";
+                words++;
+            }
+        }catch(NullPointerException e){
+            e.printStackTrace();
+        }
+        p("Most likely: " + mostCommon);
         p("----------------------------------------------------");
         database.printDatabaseInfo(); // just so we know
     }

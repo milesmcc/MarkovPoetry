@@ -85,6 +85,40 @@ public class Database {
         mostCommonStem = refindIndex.get(largest);
     }
 
+    public String getMostLikelyFollower(Bigram bigram){
+        ArrayList<String> words = new ArrayList<>();
+        boolean cont = true;
+        if(database.containsKey(bigram.getW1())) {
+            if (database.get(bigram.getW1()).containsKey(bigram.getW2())) {
+                words.addAll(database.get(bigram.getW1()).get(bigram.getW2()));
+                cont = false;
+            }
+        }
+        if(cont) {
+            for (HashMap<String, List<String>> tree1 : database.values()) {
+                if (tree1.containsKey(bigram.getW2())) {
+                    words.addAll(tree1.get(bigram.getW2()));
+                }
+            }
+        }
+        HashMap<String, Integer> commons = new HashMap<>();
+        for(String s : words){
+            if(commons.containsKey(s)){
+                commons.put(s, commons.get(s) + 1);
+            }else{
+                commons.put(s, 1);
+            }
+        }
+        String mostCommonWord = null;
+        int amount = 0;
+        for(String s : commons.keySet()){
+            if(commons.get(s) > amount){
+                mostCommonWord = s;
+            }
+        }
+        return mostCommonWord;
+    }
+
     public Bigram getMostCommonStem(){
         if(mostCommonStem == null){
             loadMostCommonStem();
