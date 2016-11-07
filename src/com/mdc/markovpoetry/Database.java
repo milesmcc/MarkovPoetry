@@ -14,6 +14,16 @@ public class Database {
 
     ArrayList<Bigram> stems = new ArrayList<>(); // our lovely stems
 
+    ArrayList<Long> stemEquivs = null;
+    public ArrayList<Long> getStemEquivs(){
+        if(stemEquivs == null || stems.size() != stemEquivs.size()){
+            for(Bigram stem : stems){
+                stemEquivs.add(stem.id());
+            }
+        }
+        return stemEquivs;
+    }
+
     /**
      * Insert word into the database as the result of bigram.
      * @param bigram the bigram stem
@@ -39,6 +49,8 @@ public class Database {
         if(bigram.getW1().equals("PERIOD")){ //okay, I'll comment this. If the bigram w2 is PERIOD, the next words are likely the beginning of a new sentence, and therefore would make good stems.
             stems.add(new Bigram(bigram.getW2(), word));
         }
+
+        total += 1;
         // gotta love Java
     }
 
@@ -58,6 +70,12 @@ public class Database {
         p("Number of level 2 keys: " + level2);
         p("Total number of stem-value pairs: " + total);
         p("Number of root stems: " + stems.size());
+    }
+
+    long total = 0;
+
+    public long getTotalValues(){
+        return total;
     }
 
     Bigram mostCommonStem = null;

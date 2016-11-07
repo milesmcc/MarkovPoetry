@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Main {
 
@@ -18,7 +19,7 @@ public class Main {
         //}
 
         //File file = new File(args[0]);
-        File file = new File("/Users/Main/Desktop/datasets3/big.txt");
+        File file = new File("/Users/Main/Desktop/datasets/trump.txt");
 
         p("Source: " + file.getAbsolutePath());
         p("Creating database...");
@@ -70,12 +71,19 @@ public class Main {
                 mostCommon += database.getMostLikelyFollower(state) + " ";
                 words++;
             }
-        }catch(NullPointerException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
         p("Most likely: " + mostCommon);
         p("----------------------------------------------------");
         database.printDatabaseInfo(); // just so we know
+        p("Entering interactive mode...");
+        //new InteractiveSession(database).interact();
+        Dibol d = new Dibol(database);
+        while(true){
+            String input = new Scanner(System.in).nextLine();
+            p("Match: " + d.compare(input));
+        }
     }
 
     public static void p(String s){

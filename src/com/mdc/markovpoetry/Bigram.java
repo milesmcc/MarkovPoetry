@@ -1,5 +1,8 @@
 package com.mdc.markovpoetry;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by Main on 9/1/16.
  */
@@ -35,4 +38,15 @@ public class Bigram {
     public String getW2() {
         return w2;
     }
+
+    public String readable() { return w1 + " " + w2; }
+
+    public static Bigram getCurrentState(String string){
+        return getCurrentState((ArrayList)Arrays.asList(LanguageUtility.tokenize(string)));
+    }
+
+    public static Bigram getCurrentState(ArrayList<String> chain){
+        return new Bigram(chain.get(chain.size() - 2), chain.get(chain.size() - 1));
+    }
+
 }
